@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Persons.API.Database.Entities;
+using Persons.API.Dtos.Countries;
 using Persons.API.Dtos.Persons;
 
 namespace Persons.API.Helpers
@@ -13,6 +14,10 @@ namespace Persons.API.Helpers
             CreateMap<PersonCreateDto, PersonEntity>();
             CreateMap<PersonEditDto, PersonEntity>();
 
+            CreateMap<CountryEntity, CountryDto>();
+            CreateMap<CountryEntity, CountryActionResponseDto>();
+            CreateMap<CountryCreateDto, CountryEntity>();
+            CreateMap<CountryEditDto, CountryEntity>();
         }
     }
 }

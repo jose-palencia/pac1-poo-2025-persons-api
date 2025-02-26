@@ -19,6 +19,7 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
 builder.Services.AddTransient<IPersonsService, PersonsService>();
+builder.Services.AddTransient<ICountriesService, CountriesService>();
 
 builder.Services.AddOpenApi();
 

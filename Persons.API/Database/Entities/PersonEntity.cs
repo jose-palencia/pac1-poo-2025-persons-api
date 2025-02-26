@@ -1,14 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Persons.API.Database.Entities.Common;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Persons.API.Database.Entities
 {
     [Table("persons")]
-    public class PersonEntity
-    {
-        [Key]
-        [Column("id")]
-        public Guid Id { get; set; }
+    public class PersonEntity : BaseEntity
+    {        
 
         [Column("first_name")]
         [Required]
@@ -25,16 +23,11 @@ namespace Persons.API.Database.Entities
         [Column("gender")]
         public string Gender { get; set; }
 
-        [Column("created_by")]
-        public string CreatedBy { get; set; }
+        [Column("country_id")]
+        public Guid? CountryId { get; set; }
 
-        [Column("created_date")]
-        public DateTime CreateDate { get; set; }
+        [ForeignKey(nameof(CountryId))]
+        public virtual CountryEntity Country { get; set; }
 
-        [Column("updated_by")]
-        public string UpdatedBy { get; set; }
-
-        [Column("updated_date")]
-        public DateTime UpdateDate { get; set; }
     }
 }
