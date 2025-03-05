@@ -24,5 +24,9 @@ namespace Persons.API.Dtos.Persons
         [Required(ErrorMessage = "El campo {0} es requerido")]
         [StringLength(1, ErrorMessage = "El {0} solo acepta {1} caracter.")]
         public string Gender { get; set; }
+
+        [Display(Name = "Pais")]
+        [Required(ErrorMessage = "El {0} es requerido.")]
+        public Guid? CountryId { get; set; } = null;
     }
 }

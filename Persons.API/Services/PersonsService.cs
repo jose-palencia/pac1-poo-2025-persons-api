@@ -13,27 +13,65 @@ namespace Persons.API.Services
     {
         private readonly PersonsDbContext _context;
         private readonly IMapper _mapper;
+        private readonly int PAGE_SIZE;
+        private readonly int PAGE_SIZE_LIMIT;
 
-        public PersonsService(PersonsDbContext context, IMapper mapper)
+        public PersonsService(
+            PersonsDbContext context, 
+            IMapper mapper,
+            IConfiguration configuration)
         {
             _context = context;
             _mapper = mapper;
+            PAGE_SIZE = configuration.GetValue<int>("PageSize");
+            PAGE_SIZE_LIMIT = configuration.GetValue<int>("PageSizeLimit");
         }
 
-        public async Task<ResponseDto<List<PersonDto>>> GetListAsync() 
+        public async Task<ResponseDto<PaginationDto<List<PersonDto>>>> GetListAsync(
+            string searchTerm = "", int page = 1, int pageSize = 0
+        ) 
         {
-            var personsEntity = await _context.Persons.ToListAsync();
+            pageSize = pageSize == 0 ? PAGE_SIZE : pageSize;
+
+            int startIndex = (page - 1) * pageSize;
+
+            IQueryable<PersonEntity> personQuery = _context.Persons;
+
+            if (!string.IsNullOrEmpty(searchTerm)) 
+            {
+                personQuery = personQuery
+                    .Where(x => (x.DNI + " " + x.FirstName + " " + x.LastName)
+                    .Contains(searchTerm));
+            }
+
+            int totalRows = await personQuery.CountAsync();
+
+            var personsEntity = await personQuery
+                .OrderBy(x => x.FirstName)
+                .Skip(startIndex)
+                .Take(pageSize)
+                .ToListAsync();
 
             var personsDto = _mapper.Map<List<PersonDto>>(personsEntity);
 
-            return new ResponseDto<List<PersonDto>> 
+            return new ResponseDto<PaginationDto<List<PersonDto>>> 
             {
                 StatusCode = HttpStatusCode.OK,
                 Status = true,
                 Message = personsEntity.Count() > 0 
                     ? "Registros encontrados" 
                     : "No se encontraron registros",
-                Data = personsDto
+                Data = new PaginationDto<List<PersonDto>> 
+                {
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    TotalItems = totalRows,
+                    TotalPages = (int)Math.Ceiling((double)totalRows / pageSize),
+                    Items = personsDto,
+                    HasNextPage = startIndex + pageSize < PAGE_SIZE_LIMIT && page < (int)Math
+                        .Ceiling((double)totalRows / pageSize),
+                    HasPreviousPage = page > 1
+                }
 
             };
             
@@ -69,6 +107,18 @@ namespace Persons.API.Services
         {
             var personEntity = _mapper.Map<PersonEntity>(dto);
 
+            var countryEntity = await _context.Countries
+                .FirstOrDefaultAsync(c => c.Id == dto.CountryId);
+
+            if (countryEntity is null)
+            {
+                return new ResponseDto<PersonActionResponseDto> 
+                {
+                    StatusCode = HttpStatusCode.BAD_REQUEST,
+                    Status = false,
+                    Message = "El pais no existe"
+                };
+            }
 
             _context.Persons.Add(personEntity);
 
@@ -96,6 +146,19 @@ namespace Persons.API.Services
                     StatusCode = HttpStatusCode.NOT_FOUND,
                     Status = false,
                     Message = "Registro no encontrado",
+                };
+            }
+
+            var countryEntity = await _context.Countries
+                .FirstOrDefaultAsync(c => c.Id == dto.CountryId);
+
+            if (countryEntity is null)
+            {
+                return new ResponseDto<PersonActionResponseDto>
+                {
+                    StatusCode = HttpStatusCode.BAD_REQUEST,
+                    Status = false,
+                    Message = "El pais no existe"
                 };
             }
 
@@ -143,5 +206,7 @@ namespace Persons.API.Services
             };
 
         }
+    
+    
     }
 }
