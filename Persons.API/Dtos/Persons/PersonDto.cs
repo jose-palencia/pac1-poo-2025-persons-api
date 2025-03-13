@@ -8,5 +8,7 @@
         public string DNI { get; set; }
         public string Gender { get; set; }
         public Guid CountryId { get; set; }
+
+        public List<FamilyMemberCreateDto> FamilyGroup { get; set; }
     }
 }
