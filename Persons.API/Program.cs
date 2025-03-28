@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persons.API.Database;
+using Persons.API.Filters;
 using Persons.API.Helpers;
 using Persons.API.Services;
 using Persons.API.Services.Interfaces;
@@ -15,11 +17,20 @@ builder.Services.AddDbContext<PersonsDbContext>(options =>
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddControllers( options => 
+{
+    options.Filters.Add(typeof(ValidateModelStateAttribute));
+});
+
+builder.Services.Configure<ApiBehaviorOptions>(options => 
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
+
 
 builder.Services.AddTransient<IPersonsService, PersonsService>();
 builder.Services.AddTransient<ICountriesService, CountriesService>();
+builder.Services.AddTransient<IStatisticsService, StatisticsService>();
 
 builder.Services.AddOpenApi();
 

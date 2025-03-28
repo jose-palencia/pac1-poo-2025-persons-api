@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Persons.API.Constants;
 using Persons.API.Database;
