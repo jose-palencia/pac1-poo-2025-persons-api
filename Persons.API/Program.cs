@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persons.API.Database;
+using Persons.API.Extensions;
 using Persons.API.Filters;
 using Persons.API.Helpers;
 using Persons.API.Services;
@@ -32,6 +33,8 @@ builder.Services.AddTransient<IPersonsService, PersonsService>();
 builder.Services.AddTransient<ICountriesService, CountriesService>();
 builder.Services.AddTransient<IStatisticsService, StatisticsService>();
 
+builder.Services.AddCorsConfiguration(builder.Configuration);
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -44,6 +47,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("CorsPolicy");
 
 app.UseAuthorization();
 
