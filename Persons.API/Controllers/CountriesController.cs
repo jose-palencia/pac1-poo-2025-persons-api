@@ -34,7 +34,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseDto<List<CountryDto>>>> GetOne(Guid id)
+        public async Task<ActionResult<ResponseDto<List<CountryDto>>>> GetOne(string id)
         {
             var response = await _countriesService.GetOneByIdAsync(id);
 
@@ -61,8 +61,8 @@ namespace Persons.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ResponseDto<List<CountryActionResponseDto>>>> Create(
-            [FromBody] CountryEditDto dto, Guid id)
+        public async Task<ActionResult<ResponseDto<List<CountryActionResponseDto>>>> Edit(
+            [FromBody] CountryEditDto dto, string id)
         {
             var response = await _countriesService.EditAsync(dto, id);
 
@@ -77,7 +77,7 @@ namespace Persons.API.Controllers
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<ResponseDto<List<CountryActionResponseDto>>>> Create(
-           Guid id)
+           string id)
         {
             var response = await _countriesService.DeleteAsync(id);
 

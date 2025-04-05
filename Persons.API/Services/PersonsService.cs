@@ -77,7 +77,7 @@ namespace Persons.API.Services
             
         }
 
-        public async Task<ResponseDto<PersonDto>> GetOneByIdAsync(Guid id) 
+        public async Task<ResponseDto<PersonDto>> GetOneByIdAsync(string id) 
         {
             var personEntity = await _context.Persons
                 .Include(x => x.FamilyGroup)
@@ -112,6 +112,8 @@ namespace Persons.API.Services
                 {
                     var personEntity = _mapper.Map<PersonEntity>(dto);
 
+                    personEntity.Id = Guid.NewGuid().ToString();
+
                     var countryEntity = await _context.Countries
                         .FirstOrDefaultAsync(c => c.Id == dto.CountryId);
 
@@ -135,7 +137,7 @@ namespace Persons.API.Services
 
                         familyGroup = familyGroup.Select(m => new FamilyMemberEntity 
                         {
-                            Id = Guid.NewGuid(),
+                            Id = Guid.NewGuid().ToString(),
                             FirstName = m.FirstName,
                             LastName = m.LastName,
                             PersonId = personEntity.Id,
@@ -174,7 +176,7 @@ namespace Persons.API.Services
         }
 
         public async Task<ResponseDto<PersonActionResponseDto>> EditAsync(
-            PersonEditDto dto, Guid id) 
+            PersonEditDto dto, string id) 
         {
             using (var transaction = await _context.Database.BeginTransactionAsync()) 
             {
@@ -226,7 +228,7 @@ namespace Persons.API.Services
                         var newFamilyGroup = dto.Family
                             .Select(fg => new FamilyMemberEntity 
                             {
-                                Id = Guid.NewGuid(),
+                                Id = Guid.NewGuid().ToString(),
                                 FirstName = fg.FirstName,
                                 LastName = fg.LastName,
                                 PersonId = id,
@@ -264,7 +266,7 @@ namespace Persons.API.Services
         }
 
         public async Task<ResponseDto<PersonActionResponseDto>> DeleteAsync(
-            Guid id) 
+            string id) 
         {
             var personEntity =  await _context.Persons
                 .FirstOrDefaultAsync(x => x.Id == id);

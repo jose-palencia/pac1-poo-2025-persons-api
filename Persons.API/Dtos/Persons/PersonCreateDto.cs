@@ -27,7 +27,7 @@ namespace Persons.API.Dtos.Persons
 
         [Display(Name = "Pais")]
         [Required(ErrorMessage = "El {0} es requerido.")]
-        public Guid? CountryId { get; set; } = null;
+        public string CountryId { get; set; } = null;
 
         // arreglo de Family Member
         public List<FamilyMemberCreateDto> Family { get; set; }

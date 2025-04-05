@@ -74,7 +74,7 @@ namespace Persons.API.Services
             };
         }
 
-        public async Task<ResponseDto<CountryDto>> GetOneByIdAsync(Guid id) 
+        public async Task<ResponseDto<CountryDto>> GetOneByIdAsync(string id) 
         {
             var country = await _context.Countries
                 .FirstOrDefaultAsync(x => x.Id == id);
@@ -104,6 +104,8 @@ namespace Persons.API.Services
         {
             var countryEntity = _mapper.Map<CountryEntity>(dto);
 
+            countryEntity.Id = Guid.NewGuid().ToString();
+
             _context.Countries.Add(countryEntity);
             await _context.SaveChangesAsync();
 
@@ -117,7 +119,7 @@ namespace Persons.API.Services
         }
 
         public async Task<ResponseDto<CountryActionResponseDto>> EditAsync(
-            CountryEditDto dto, Guid id
+            CountryEditDto dto, string id
             )
         {
             var countryEntity = await _context.Countries.FindAsync(id);
@@ -147,7 +149,7 @@ namespace Persons.API.Services
         }
 
         public async Task<ResponseDto<CountryActionResponseDto>> DeleteAsync(
-            Guid id) 
+            string id) 
         {
             var countryEntity = await _context.Countries.FindAsync(id);
 
