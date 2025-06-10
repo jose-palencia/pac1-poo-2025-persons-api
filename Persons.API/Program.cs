@@ -32,8 +32,10 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 builder.Services.AddTransient<IPersonsService, PersonsService>();
 builder.Services.AddTransient<ICountriesService, CountriesService>();
 builder.Services.AddTransient<IStatisticsService, StatisticsService>();
+builder.Services.AddTransient<IRolesService, RolesService>();
 
 builder.Services.AddCorsConfiguration(builder.Configuration);
+builder.Services.AddAuthenticationConfig(builder.Configuration);
 
 builder.Services.AddOpenApi();
 
