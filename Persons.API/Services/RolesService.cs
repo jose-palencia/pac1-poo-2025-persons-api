@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Persons.API.Constants;
 using Persons.API.Database;
 using Persons.API.Database.Entities;
 using Persons.API.Dtos.Common;
@@ -53,9 +54,59 @@ namespace Persons.API.Services
 
             int totalRows = await rolesQuery.CountAsync();
 
+            var roles = await rolesQuery
+                .OrderBy(r => r.Name)
+                .Skip(startIndex)
+                .Take(pageSize)
+                .ToListAsync();
 
+            var rolesDto = _mapper.Map<List<RoleDto>>(roles);
 
-            throw new NotImplementedException();
+            return new ResponseDto<PaginationDto<List<RoleDto>>> 
+            {
+                StatusCode = HttpStatusCode.OK,
+                Status = true,
+                Message = "Registros ibtenidos correctamente",
+                Data = new PaginationDto<List<RoleDto>> 
+                {
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    TotalItems = totalRows,
+                    TotalPages = (int)Math.Ceiling((double)totalRows / pageSize),
+                    Items = rolesDto,
+                    HasNextPage = startIndex + pageSize < PAGE_SIZE_LIMIT && 
+                        page < (int)Math.Ceiling((double)totalRows / pageSize),
+                    HasPreviousPage = page > 1
+
+                }
+            };
+        }
+
+        public async Task<ResponseDto<RoleActionResponseDto>> 
+            CreateAsync(RoleCreateDto dto) 
+        {
+            var role = _mapper.Map<RoleEntity>(dto);
+
+            var result = await _roleManager.CreateAsync(role);
+
+            if (!result.Succeeded) 
+            {
+                return new ResponseDto<RoleActionResponseDto> 
+                {
+                    StatusCode = HttpStatusCode.BAD_REQUEST,
+                    Status = false,
+                    Message = string.Join(", ", result.Errors
+                        .Select(e => e.Description)),
+                };           
+            }
+
+            return new ResponseDto<RoleActionResponseDto> 
+            {
+                StatusCode = HttpStatusCode.CREATED,
+                Status = true,
+                Message = "Registro creado correctamente",
+                Data = _mapper.Map<RoleActionResponseDto>(role)
+            };
         }
     }
 }
