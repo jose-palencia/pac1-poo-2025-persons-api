@@ -35,6 +35,19 @@ namespace Persons.API.Controllers
                 });
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ResponseDto<RoleDto>>> GetOneById(string id) 
+        {
+            var response = await _rolesService.GetOneById(id);
+            return StatusCode(response.StatusCode,
+                new ResponseDto<RoleDto>
+                {
+                    Status = response.Status,
+                    Message = response.Message,
+                    Data = response.Data
+                });
+        }
+
         [HttpPost]
         public async Task<ActionResult<ResponseDto<RoleActionResponseDto>>> 
             CreateAsync(
@@ -42,6 +55,34 @@ namespace Persons.API.Controllers
         )
         {
             var response = await _rolesService.CreateAsync(dto);
+            return StatusCode(response.StatusCode,
+                new ResponseDto<RoleActionResponseDto>
+                {
+                    Status = response.Status,
+                    Message = response.Message,
+                    Data = response.Data
+                });
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ResponseDto<RoleActionResponseDto>>> Edit(
+            [FromBody] RoleEditDto dto, string id
+            ) 
+        {
+            var response = await _rolesService.EditAsync(dto, id);
+            return StatusCode(response.StatusCode,
+                new ResponseDto<RoleActionResponseDto>
+                {
+                    Status = response.Status,
+                    Message = response.Message,
+                    Data = response.Data
+                });
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ResponseDto<RoleActionResponseDto>>> Delete(string id) 
+        {
+            var response = await _rolesService.DeleteAsync(id);
             return StatusCode(response.StatusCode,
                 new ResponseDto<RoleActionResponseDto>
                 {
