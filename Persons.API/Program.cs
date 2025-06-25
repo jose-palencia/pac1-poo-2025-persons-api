@@ -33,6 +33,7 @@ builder.Services.AddTransient<IPersonsService, PersonsService>();
 builder.Services.AddTransient<ICountriesService, CountriesService>();
 builder.Services.AddTransient<IStatisticsService, StatisticsService>();
 builder.Services.AddTransient<IRolesService, RolesService>();
+builder.Services.AddTransient<IUsersService, UsersService>();
 
 builder.Services.AddCorsConfiguration(builder.Configuration);
 builder.Services.AddAuthenticationConfig(builder.Configuration);

@@ -3,6 +3,7 @@ using Persons.API.Database.Entities;
 using Persons.API.Dtos.Countries;
 using Persons.API.Dtos.Persons;
 using Persons.API.Dtos.Security.Roles;
+using Persons.API.Dtos.Security.Users;
 
 namespace Persons.API.Helpers
 {
@@ -27,6 +28,15 @@ namespace Persons.API.Helpers
             CreateMap<RoleCreateDto, RoleEntity>();
             CreateMap<RoleEditDto, RoleEntity>();
 
+            CreateMap<UserEntity, UserDto>();
+            CreateMap<UserEntity, UserActionResponseDto>()
+                .ForMember(dest => dest.FullName, org => 
+                org.MapFrom(src => $"{src.FirstName} {src.LastName}"));
+
+            CreateMap<UserCreateDto, UserEntity>()
+                .ForMember(dest => dest.UserName, org => 
+                org.MapFrom(src => src.Email));
+            CreateMap<UserEditDto, UserEntity>();
         }
     }
 }
