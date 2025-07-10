@@ -313,5 +313,84 @@ namespace Persons.API.Services
 
         }
 
+        public async Task<ResponseDto<UserActionResponseDto>> DeleteAsync(
+            string id) 
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user is null) 
+            {
+                return new ResponseDto<UserActionResponseDto> 
+                {
+                    StatusCode = HttpStatusCode.NOT_FOUND,
+                    Status = false,
+                    Message = "Registro no encontrado"
+                };
+            }
+
+            using var transaction = await _context.Database
+                .BeginTransactionAsync();
+
+            try
+            {
+                var userResponse = _mapper.Map<UserActionResponseDto>(user);
+
+                var currentRoles = await _userManager.GetRolesAsync(user);
+
+                if (currentRoles.Any()) 
+                {
+                    var removeRolesResult = await _userManager
+                        .RemoveFromRolesAsync(user, currentRoles);
+
+                    if (!removeRolesResult.Succeeded) 
+                    {
+                        await transaction.RollbackAsync();
+
+                        return new ResponseDto<UserActionResponseDto> 
+                        {
+                            StatusCode = HttpStatusCode.BAD_REQUEST,
+                            Status = false,
+                            Message = $"Error al remover roles: {string.Join(", ", removeRolesResult
+                            .Errors.Select(e => e.Description))}"
+                        };
+                    }
+                }
+
+                var deleteUserResult = await _userManager.DeleteAsync(user);
+                if (!deleteUserResult.Succeeded) 
+                {
+                    await transaction.RollbackAsync();
+
+                    return new ResponseDto<UserActionResponseDto>
+                    {
+                        StatusCode = HttpStatusCode.BAD_REQUEST,
+                        Status = false,
+                        Message = string.Join(", ", deleteUserResult
+                            .Errors.Select(e => e.Description))
+                    };
+                }
+
+                await transaction.CommitAsync();
+
+                return new ResponseDto<UserActionResponseDto> 
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Status = true,
+                    Message = "Registro borrado correctamente",
+                    Data = userResponse
+                };
+            }
+            catch (Exception) 
+            {
+                await transaction.RollbackAsync();
+
+                return new ResponseDto<UserActionResponseDto> 
+                {
+                    StatusCode = HttpStatusCode.INTERNAL_SERVER_ERROR,
+                    Status = false,
+                    Message = "Error interno del servidor"
+                };
+            }
+        }
     }
 }

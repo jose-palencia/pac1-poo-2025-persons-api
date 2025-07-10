@@ -80,5 +80,20 @@ namespace Persons.API.Controllers
                 });
         }
 
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<ResponseDto<UserActionResponseDto>>> 
+            Delete(string id) 
+        {
+            var response = await _usersService.DeleteAsync(id);
+
+            return StatusCode(response.StatusCode, new ResponseDto<UserActionResponseDto> 
+            {
+                StatusCode = response.StatusCode,
+                Status = response.Status,
+                Message = response.Message,
+                Data = response.Data
+            });
+        }
+
     }
 }
