@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Persons.API.Constants;
+using Persons.API.Database;
 using Persons.API.Database.Entities;
 using Persons.API.Dtos.Common;
 using Persons.API.Dtos.Security.Auth;
@@ -16,15 +18,18 @@ namespace Persons.API.Services
         private readonly SignInManager<UserEntity> _signInManager;
         private readonly UserManager<UserEntity> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly PersonsDbContext _context;
 
         public AuthService(
             SignInManager<UserEntity> signInManager,
             UserManager<UserEntity> userManager,
-            IConfiguration configuration) 
+            IConfiguration configuration,
+            PersonsDbContext context) 
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _configuration = configuration;
+            this._context = context;
         }
 
         public async Task<ResponseDto<LoginResponseDto>> LoginAsync(LoginDto dto)
@@ -46,7 +51,8 @@ namespace Persons.API.Services
                 };
             }
 
-            var userEntity = await _userManager.FindByEmailAsync(dto.Email);
+            var userEntity = await _context.Users
+                .Where(u => u.Email == dto.Email).FirstOrDefaultAsync();
 
             // ClaimList Creation
             var authClaims = new List<Claim> 
