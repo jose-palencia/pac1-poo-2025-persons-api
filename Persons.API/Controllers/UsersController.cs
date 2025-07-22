@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Persons.API.Constants;
 using Persons.API.Dtos.Common;
 using Persons.API.Dtos.Security.Users;
 using Persons.API.Services.Interfaces;
@@ -21,7 +22,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "NORMAL_USER, SYS_ADMIN_EDITADO")]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<PaginationDto<List<UserDto>>>>> 
             GetPaginationList(string searchTerm = "", int page = 1, int pageSize = 0) 
         {
@@ -38,7 +39,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "SYS_ADMIN_EDITADO")]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<UserDto>>> GetOneById(
             string id) 
         {
@@ -53,7 +54,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "SYS_ADMIN_EDITADO")]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<UserActionResponseDto>>> 
             Create([FromBody] UserCreateDto dto) 
         {
@@ -70,7 +71,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "SYS_ADMIN_EDITADO")]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<UserActionResponseDto>>> Edit(
             [FromBody] UserEditDto dto, string id) 
         {
@@ -87,7 +88,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "SYS_ADMIN_EDITADO")]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<UserActionResponseDto>>> 
             Delete(string id) 
         {

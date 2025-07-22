@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Persons.API.Dtos.Common;
 using Persons.API.Dtos.Security.Auth;
@@ -8,6 +9,7 @@ namespace Persons.API.Controllers
 {
     [Route("api/auth")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -19,6 +21,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<ActionResult<ResponseDto<LoginResponseDto>>>
             Login(LoginDto dto)
         { 

@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Persons.API.Database.Configuration;
 using Persons.API.Database.Entities;
+using Persons.API.Database.Entities.Common;
+using Persons.API.Services.Interfaces;
 
 namespace Persons.API.Database
 {
@@ -11,14 +14,54 @@ namespace Persons.API.Database
         string
         >
     {
-        public PersonsDbContext(DbContextOptions options) : base(options)
+        private readonly IAuditService _auditService;
+
+        public PersonsDbContext(DbContextOptions options,
+            IAuditService auditService) : base(options)
         {
+            _auditService = auditService;
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             SetIdentityTablesNames(builder);
+
+            builder.ApplyConfiguration(new CountriesConfiguration());
+        }
+
+        public override Task<int> SaveChangesAsync(
+            CancellationToken cancellationToken = default)
+        {
+            var entries = ChangeTracker
+                .Entries()
+                .Where(e => e.Entity is BaseEntity && (
+                    e.State == EntityState.Added ||
+                    e.State == EntityState.Modified
+                ));
+
+            foreach (var entityEntry in entries)
+            {
+                var entity = entityEntry.Entity as BaseEntity;
+                if (entity != null) 
+                {
+                    if (entityEntry.State == EntityState.Added)
+                    {
+                        entity.CreateDate = DateTime.Now;
+                        entity.CreatedBy = _auditService.GetUserId();
+                        entity.UpdateDate = DateTime.Now;
+                        entity.UpdatedBy = _auditService.GetUserId();
+                    }
+                    else
+                    {
+                        entity.UpdateDate = DateTime.Now;
+                        entity.UpdatedBy = _auditService.GetUserId();
+                    }
+                }
+            }
+
+
+            return base.SaveChangesAsync(cancellationToken);
         }
 
         private static void SetIdentityTablesNames(ModelBuilder builder)

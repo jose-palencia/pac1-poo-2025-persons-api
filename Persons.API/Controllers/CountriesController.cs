@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Persons.API.Constants;
 using Persons.API.Dtos.Common;
 using Persons.API.Dtos.Countries;
 using Persons.API.Services.Interfaces;
@@ -7,6 +9,7 @@ using Persons.API.Services.Interfaces;
 namespace Persons.API.Controllers
 {
     [Route("api/countries")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     public class CountriesController : ControllerBase
     {
@@ -18,6 +21,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}, {RolesConstant.NORMAL_USER}")]
         public async Task<ActionResult<ResponseDto<List<CountryDto>>>> GetList(
             string searchTerm = "", int page = 1, int pageSize = 0
             )
@@ -34,6 +38,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}, {RolesConstant.NORMAL_USER}")]
         public async Task<ActionResult<ResponseDto<List<CountryDto>>>> GetOne(string id)
         {
             var response = await _countriesService.GetOneByIdAsync(id);
@@ -47,6 +52,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<List<CountryActionResponseDto>>>> Create(
             [FromBody] CountryCreateDto dto)
         {
@@ -61,6 +67,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<List<CountryActionResponseDto>>>> Edit(
             [FromBody] CountryEditDto dto, string id)
         {
@@ -76,6 +83,7 @@ namespace Persons.API.Controllers
 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<List<CountryActionResponseDto>>>> Create(
            string id)
         {

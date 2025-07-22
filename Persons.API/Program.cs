@@ -16,6 +16,9 @@ builder.Services.AddDbContext<PersonsDbContext>(options =>
     options.UseSqlite(builder.Configuration
     .GetConnectionString("DefaultConnection")));
 
+// Acceder al contexto de la petición HTTP
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
 builder.Services.AddControllers( options => 
@@ -35,6 +38,7 @@ builder.Services.AddTransient<IStatisticsService, StatisticsService>();
 builder.Services.AddTransient<IRolesService, RolesService>();
 builder.Services.AddTransient<IUsersService, UsersService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuditService, AuditService>();
 
 builder.Services.AddCorsConfiguration(builder.Configuration);
 builder.Services.AddAuthenticationConfig(builder.Configuration);

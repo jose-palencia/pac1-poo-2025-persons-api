@@ -51,8 +51,10 @@ namespace Persons.API.Services
                 };
             }
 
-            var userEntity = await _context.Users
-                .Where(u => u.Email == dto.Email).FirstOrDefaultAsync();
+            //var userEntity = await _context.Users
+            //    .Where(u => u.Email == dto.Email).FirstOrDefaultAsync();
+
+            var userEntity = await _userManager.FindByEmailAsync(dto.Email);
 
             // ClaimList Creation
             var authClaims = new List<Claim> 

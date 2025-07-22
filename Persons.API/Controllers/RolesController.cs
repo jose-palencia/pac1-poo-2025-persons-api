@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Persons.API.Constants;
 using Persons.API.Dtos.Common;
 using Persons.API.Dtos.Security.Roles;
 using Persons.API.Services.Interfaces;
@@ -8,6 +10,7 @@ namespace Persons.API.Controllers
 {
     [Route("api/roles")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class RolesController : ControllerBase
     {
         private readonly IRolesService _rolesService;
@@ -18,6 +21,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<PaginationDto
             <List<RoleDto>>>>> GetListPagination(
             string searchTerm = "", int page = 1, int pageSize = 10
@@ -36,6 +40,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<RoleDto>>> GetOneById(string id) 
         {
             var response = await _rolesService.GetOneById(id);
@@ -49,6 +54,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<RoleActionResponseDto>>> 
             CreateAsync(
             RoleCreateDto dto
@@ -65,6 +71,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<RoleActionResponseDto>>> Edit(
             [FromBody] RoleEditDto dto, string id
             ) 
@@ -80,6 +87,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<RoleActionResponseDto>>> Delete(string id) 
         {
             var response = await _rolesService.DeleteAsync(id);

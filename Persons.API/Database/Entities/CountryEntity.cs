@@ -16,5 +16,8 @@ namespace Persons.API.Database.Entities
         public string AlphaCode3 { get; set; }
 
         public virtual IEnumerable<PersonEntity> Persons { get; set; }
+
+        public virtual UserEntity CreatedByUser { get; set; }
+        public virtual UserEntity UpdatedByUser { get; set; }
     }
 }
