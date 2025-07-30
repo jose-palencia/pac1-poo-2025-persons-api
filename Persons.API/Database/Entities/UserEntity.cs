@@ -20,5 +20,11 @@ namespace Persons.API.Database.Entities
 
         [Column("birth_date")]
         public DateTime BirthDate { get; set; }
+
+        [Column("refresh_token")]
+        public string RefreshToken { get; set; }
+
+        [Column("refresh_token_expiry")]
+        public DateTime RefreshTokenExpiry { get; set; }
     }
 }

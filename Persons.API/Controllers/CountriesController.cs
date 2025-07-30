@@ -21,7 +21,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}, {RolesConstant.NORMAL_USER}")]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<List<CountryDto>>>> GetList(
             string searchTerm = "", int page = 1, int pageSize = 0
             )
@@ -38,7 +38,7 @@ namespace Persons.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}, {RolesConstant.NORMAL_USER}")]
+        [Authorize(Roles = $"{RolesConstant.SYS_ADMIN_EDITADO}")]
         public async Task<ActionResult<ResponseDto<List<CountryDto>>>> GetOne(string id)
         {
             var response = await _countriesService.GetOneByIdAsync(id);
